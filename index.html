@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حاسبة الرواتب والكشف المالي</title>
+    <!-- add css file -->
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+
+    <div class="card" id="printableCard">
+        <!-- Header with Flexbox Layout -->
+        <div class="header">
+            <div class="header-top-bar">
+                <span class="accountant-badge">
+                    <span class="icon">💼</span> محاسب مالي
+                </span>
+                <span class="accountant-name">Acc.ahmad aladary</span>
+            </div>
+            <span class="badge">حساب تلقائي مباشر</span>
+            <h2>بيانات الكشف المالي</h2>
+        </div>
+
+        <!-- Employee Info Section -->
+        <div class="info-box">
+            <div class="form-group">
+                <label for="employeeName">اسم الموظف:</label>
+                <input type="text" id="employeeName" value="أحمد الأداري" oninput="calculate()">
+            </div>
+            <div class="form-group">
+                <label for="jobTitle">المسمى الوظيفي:</label>
+                <select id="jobTitle" onchange="calculate()">
+                    <option value="" disabled selected hidden>اختر المسمى الوظيفي</option>
+                    <option value="11050">مدير</option>
+                    <option value="6500">أمين السر</option>
+                    <option value="6500">المحاسب</option>
+                    <option value="6500">مرشد تربوي</option>
+                    <option value="6500">أمين مستودع</option>
+                    <option value="6500">موجه</option>
+                    <option value="6500">مشرف مسائي</option>
+                    <option value="6500">مشرف ليلي</option>
+                    <option value="6500">مرشد طلاب مسائي</option>
+                    <option value="6500">مرشد طلاب ليلي</option>
+                    <option value="0">طاهٍ</option>
+                    <option value="0">حارس</option>
+                    <option value="0">مستخدم</option>
+                    <option value="0">عامل مطبخ</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Section 1: Earnings -->
+        <div class="section-title">أولاً: المستحقات والتعويضات</div>
+        
+        <div class="form-group">
+            <label for="baseSalary">الأجر المقطوع الأساسي:</label>
+            <input type="number" id="baseSalary" value="0" oninput="calculate()">
+        </div>
+
+        <div class="form-group">
+            <label for="familyAllowance">التعويض العائلي:</label>
+            <input type="number" id="familyAllowance" value="0" oninput="calculate()">
+        </div>
+
+        <div class="row">
+            <span>تعويض المسمى الوظيفي:</span>
+            <span id="resJobAllowance" class="en-num">0.00</span>
+        </div>
+
+        <div class="row highlight">
+            <span>الأجر قبل حسم الضرائب (إجمالي الإيراد):</span>
+            <span id="resGross" class="en-num">0.00</span>
+        </div>
+
+        <!-- Section 2: Deductions -->
+        <div class="section-title">ثانياً: الحسميات والاقتطاعات</div>
+
+        <div class="row">
+            <span>التأمينات الاجتماعية (7% من المقطوع):</span>
+            <span id="resSocial" class="en-num">0.00</span>
+        </div>
+
+        <div class="row">
+            <span>طابع عقد (0.8% من المقطوع):</span>
+            <span id="resStamp" class="en-num">0.00</span>
+        </div>
+
+        <div class="row">
+            <span>ضريبة الدخل (الشريحة القانونية):</span>
+            <span id="resTax" class="en-num">0.00</span>
+        </div>
+
+        <div class="row alert">
+            <span>مجموع الحسميات والضرائب:</span>
+            <span id="resDeductions" class="en-num">0.00</span>
+        </div>
+
+        <!-- Net Salary Box -->
+        <div class="net-salary-box">
+            <span>صافي الراتب المستحق للصرف</span>
+            <div id="resNet" class="net-value en-num">0.00</div>
+        </div>
+
+        <!-- Print Action -->
+        <button class="btn-print" onclick="window.print()">طباعة الكشف / حفظ PDF</button>
+    </div>
+
+    <script>
+        function calculate() {
+            let jobAllowance = parseFloat(document.getElementById('jobTitle').value) || 0;
+            let baseSalary = parseFloat(document.getElementById('baseSalary').value) || 0;
+            let familyAllowance = parseFloat(document.getElementById('familyAllowance').value) || 0;
+
+            let social = baseSalary * 0.07;
+            let stamp = baseSalary * 0.008;
+            let gross = familyAllowance + jobAllowance + baseSalary;
+            
+            let taxableBase = (baseSalary + jobAllowance + familyAllowance) - (stamp + social);
+            let tax = Math.max(0, (taxableBase - 12560) * 0.15);
+            
+            let totalDeductions = social + stamp + tax;
+            let netSalary = gross - totalDeductions;
+
+            const formatNum = (num) => num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+            document.getElementById('resJobAllowance').innerText = formatNum(jobAllowance);
+            document.getElementById('resGross').innerText = formatNum(gross);
+            document.getElementById('resSocial').innerText = formatNum(social);
+            document.getElementById('resStamp').innerText = formatNum(stamp);
+            document.getElementById('resTax').innerText = formatNum(tax);
+            document.getElementById('resDeductions').innerText = formatNum(totalDeductions);
+            document.getElementById('resNet').innerText = formatNum(netSalary);
+        }
+
+        calculate();
+    </script>
+</body>
+</html>
